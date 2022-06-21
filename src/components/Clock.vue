@@ -23,15 +23,29 @@ function formatTime(time: number): string {
 </script>
 
 <template>
-  <v-card :dark="active" :color="active ? 'primary' : 'default'">
+  <v-card
+    :dark="active"
+    :color="active ? 'primary' : 'default'"
+    class="fill-height"
+  >
     <v-card-text>
-      <h1 style="font-size: 90px; line-height: 120px">
+      <h1 class="title">
         {{ formatTime(time) }}
       </h1>
-      <h1 style="font-size: 60px; line-height: 80px">{{ name }}</h1>
+      <h2 class="subtitle">{{ name }}</h2>
     </v-card-text>
   </v-card>
 </template>
 
-<style scoped></style>
+<style scoped>
+.title {
+  font-size: 90px;
+  line-height: 120px;
+}
+
+.subtitle {
+  font-size: 60px;
+  line-height: 80px;
+}
+</style>
 

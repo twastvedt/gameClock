@@ -7,7 +7,7 @@
       "@/*": ["./src/*"]
     },
     "target": "es2017",
-    "lib": ["es2017"]
+    "lib": ["es2017", "DOM"]
   },
 
   "references": [
