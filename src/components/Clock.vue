@@ -48,4 +48,3 @@ function formatTime(time: number): string {
   line-height: 80px;
 }
 </style>
-
