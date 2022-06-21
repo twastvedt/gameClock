@@ -1,66 +1,84 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import Clock from "./components/Clock.vue";
+import draggable from "vuedraggable";
+
 interface Timer {
   name: string;
   time: number;
 }
 
-const timers: Timer[] = reactive([]);
-
 const additionalTime = 30.99;
 const maximumTime = 90.99;
 
-timers.push({ name: "Dad", time: additionalTime });
-timers.push({ name: "Solvejg", time: additionalTime });
-timers.push({ name: "Bjørn", time: additionalTime });
-timers.push({ name: "Mom", time: additionalTime });
-timers.push({ name: "Trygve", time: additionalTime });
-//timers.push({ name: "Adam", time: additionalTime });
+const state = reactive({
+  drawer: false,
+  paused: false,
+  timers: [] as Timer[],
+  activeTimer: null as Timer | null,
+  editMode: false,
+});
 
-let state = reactive({ activeIndex: 0, drawer: false, paused: false });
-let activeTimer = timers[0];
+state.timers.push(
+  ...[
+    { name: "Dad", time: additionalTime },
+    { name: "Solvejg", time: additionalTime },
+    { name: "Bjørn", time: additionalTime },
+    { name: "Mom", time: additionalTime },
+    { name: "Trygve", time: additionalTime },
+  ]
+);
+//state.timers.push({ name: "Adam", time: additionalTime });
+
+state.activeTimer = state.timers[0];
 let start = Date.now();
-let startTime = activeTimer.time;
+let startTime = state.activeTimer?.time;
 let nextBeep = 10;
 
 function nextTurn(): void {
-  activeTimer.time = Math.min(activeTimer.time + additionalTime, maximumTime);
+  if (state.activeTimer) {
+    state.activeTimer.time = Math.min(
+      state.activeTimer.time + additionalTime,
+      maximumTime
+    );
 
-  state.activeIndex = (state.activeIndex + 1) % timers.length;
-  activeTimer = timers[state.activeIndex];
+    state.activeTimer =
+      state.timers[
+        (state.timers.indexOf(state.activeTimer) + 1) % state.timers.length
+      ];
 
-  startTime = activeTimer.time;
-  start = Date.now();
-  nextBeep = 10;
+    startTime = state.activeTimer.time;
+    start = Date.now();
+    nextBeep = 10;
+  }
 }
 
 function pauseGame(): void {
   state.paused = !state.paused;
 
-  if (!state.paused) {
-    startTime = activeTimer.time;
+  if (!state.paused && state.activeTimer) {
+    startTime = state.activeTimer.time;
     start = Date.now();
   }
 }
 
 function play(): void {
   setInterval(() => {
-    if (!state.paused) {
-      if (activeTimer.time <= 0.1) {
-        activeTimer.time = 0;
+    if (!state.paused && state.activeTimer) {
+      if (state.activeTimer.time <= 0.1) {
+        state.activeTimer.time = 0;
         nextTurn();
         return;
       }
 
-      if (activeTimer.time < nextBeep) {
+      if (state.activeTimer.time < nextBeep) {
         beep();
         //if (nextBeep < 3) {
         //  beep();
         //}
         nextBeep -= 1;
       }
-      activeTimer.time = startTime - (Date.now() - start) / 1000;
+      state.activeTimer.time = startTime - (Date.now() - start) / 1000;
     }
   }, 100);
 }
@@ -78,6 +96,14 @@ function clickMain(): void {
   }
 
   pauseGame();
+}
+
+function toggleEdit(): void {
+  state.editMode = !state.editMode;
+
+  if (state.editMode) {
+    state.paused = true;
+  }
 }
 
 window.addEventListener("keyup", (event: KeyboardEvent) => {
@@ -110,7 +136,16 @@ play();
         {{ state.paused ? "un" : "" }}pause
       </v-btn>
       <v-spacer />
-      <v-btn @click="nextTurn">next turn</v-btn>
+      <v-btn @click="nextTurn" title="Next turn"
+        ><v-icon>mdi-arrow-right</v-icon></v-btn
+      >
+      <v-btn
+        @click="toggleEdit"
+        dark
+        :class="state.editMode ? 'bg-primary' : ''"
+        title="Edit"
+        ><v-icon>mdi-pencil</v-icon></v-btn
+      >
     </v-app-bar>
 
     <v-navigation-drawer v-model="state.drawer" absolute temporary>
@@ -128,19 +163,27 @@ play();
     </v-navigation-drawer>
     <v-main class="main" @click="clickMain">
       <v-container class="fill-height" fluid>
-        <v-row class="fill-height">
-          <v-col v-for="(timer, i) in timers" :key="i" cols="4" class="player">
-            <Clock
-              :name="timer.name"
-              :time="timer.time"
-              :active="i === state.activeIndex"
-            />
-          </v-col>
-        </v-row>
+        <draggable
+          class="v-row fill-height"
+          v-model="state.timers"
+          item-key="name"
+          :disabled="!state.editMode"
+        >
+          <template #item="{ element }">
+            <v-col cols="4" class="player">
+              <Clock
+                :name="element.name"
+                :time="element.time"
+                :active="element === state.activeTimer"
+              />
+            </v-col>
+          </template>
+        </draggable>
       </v-container>
     </v-main>
   </v-app>
 </template>
+
 <style>
 .player {
   height: 50%;
