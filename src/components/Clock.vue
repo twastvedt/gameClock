@@ -1,9 +1,22 @@
 <script setup lang="ts">
+import { computed } from "vue";
+
 const props = defineProps<{
-  time: number;
   name: string;
+  time: number;
   active: boolean;
 }>();
+
+const emit = defineEmits(["update:name"]);
+
+const innerName = computed({
+  get() {
+    return props.name;
+  },
+  set(value) {
+    emit("update:name", value);
+  },
+});
 
 function formatTime(time: number): string {
   let displayTime;
@@ -32,7 +45,7 @@ function formatTime(time: number): string {
       <h1 class="title">
         {{ formatTime(time) }}
       </h1>
-      <h2 class="subtitle">{{ name }}</h2>
+      <v-text-field v-model="innerName" />
     </v-card-text>
   </v-card>
 </template>
@@ -43,7 +56,7 @@ function formatTime(time: number): string {
   line-height: 120px;
 }
 
-.subtitle {
+.v-text-field :deep(input) {
   font-size: 60px;
   line-height: 80px;
 }
