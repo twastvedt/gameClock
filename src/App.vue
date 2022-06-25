@@ -104,6 +104,10 @@ function toggleEdit(): void {
   }
 }
 
+function addPlayer(): void {
+  state.timers.push({ name: "Player", time: additionalTime });
+}
+
 window.addEventListener("keyup", (event: KeyboardEvent) => {
   switch (event.code) {
     case "Escape":
@@ -163,19 +167,30 @@ play();
       </v-list>
     </v-navigation-drawer>
     <v-main class="main" @click="clickMain">
-      <v-container class="fill-height" fluid>
+      <v-container class="fill-height players" fluid>
         <draggable
           class="v-row fill-height"
           v-model="state.timers"
           :disabled="!state.editMode"
         >
           <template #item="{ element }">
-            <v-col cols="4" class="player">
+            <v-col cols="4">
               <Clock
                 v-model:name="element.name"
                 :time="element.time"
                 :active="element === state.activeTimer"
               />
+            </v-col>
+          </template>
+
+          <template #footer>
+            <v-col cols="4" v-if="state.editMode">
+              <v-card
+                class="fill-height d-flex flex-column align-center justify-center elevation-0 newPlayerButton"
+                @click="addPlayer"
+              >
+                +
+              </v-card>
             </v-col>
           </template>
         </draggable>
@@ -185,8 +200,14 @@ play();
 </template>
 
 <style>
-.player {
+.players .v-col {
   height: 50%;
+}
+
+.newPlayerButton {
+  font-size: 150px;
+  background: transparent;
+  border: 1px dashed black;
 }
 
 .main {
