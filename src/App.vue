@@ -172,6 +172,7 @@ play();
           class="v-row fill-height"
           v-model="state.timers"
           :disabled="!state.editMode"
+          item-key="name"
         >
           <template #item="{ element }">
             <v-col cols="4">
