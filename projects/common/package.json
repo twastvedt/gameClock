@@ -1,0 +1,8 @@
+{
+  "name": "common",
+  "version": "0.0.0",
+  "description": "Common code for game clock app",
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {}
+}
