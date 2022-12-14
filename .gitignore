@@ -11,6 +11,7 @@ node_modules
 .DS_Store
 dist
 dist-ssr
+build
 coverage
 *.local
 
@@ -18,11 +19,11 @@ coverage
 /cypress/screenshots/
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
 .idea
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+projects/server/clientBuild

@@ -1,5 +1,5 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "extends": "../../tsconfig-base.json",
   "include": [
     "env.d.ts",
     "src/**/*",
@@ -12,9 +12,10 @@
         "./src/*"
       ]
     },
-    "target": "es2017",
+    "outDir": "build",
+    "tsBuildInfoFile": "build/.tsbuildinfo",
     "lib": [
-      "es2017",
+      "ESNext",
       "DOM"
     ],
     "types": [
@@ -22,7 +23,11 @@
     ]
   },
   "references": [
-    "./tsconfig.config.json",
-    "../common"
+    {
+      "path": "./tsconfig.config.json",
+    },
+    {
+      "path": "../common"
+    }
   ]
 }

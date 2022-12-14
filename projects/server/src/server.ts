@@ -12,7 +12,7 @@ const app = express()
   .use(bodyParser.json(), bodyParser.urlencoded({ extended: true }));
 
 if (production) {
-  app.use(_static(join(__dirname, "clientBuild"), { maxAge: "1y", etag: false }));
+  app.use(_static(join(__dirname, "../clientBuild"), { maxAge: "1y", etag: false }));
 }
 
 app.listen(app.get("port"), () => {

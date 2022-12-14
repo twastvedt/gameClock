@@ -2,7 +2,7 @@
   "compilerOptions": {
     "composite": true,
     "target": "esnext",
-    "module": "commonjs",
+    "module": "ESNext",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
@@ -20,6 +20,11 @@
       "./node_modules/@types",
       "./node_modules/vuetify/types"
     ],
-    "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
+    "plugins": [
+      {
+        "transform": "ts-nameof",
+        "type": "raw"
+      }
+    ]
   }
 }
