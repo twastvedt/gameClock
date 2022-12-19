@@ -1,20 +1,17 @@
 import { Game } from "./Game";
 
-export interface ServerToClientEvents {
+export interface ServerEvents {
   update: (state: Partial<Game>) => void;
   initialize: (state: Game) => void;
 }
 
-export interface ClientToServerEvents {
+export interface ClientEvents {
   update: (state: Partial<Game>) => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export interface IntraServerEvents {
+export interface ServerSideEvents {
   ping: () => void;
 }
 
-export interface SocketData {
-  name: string;
-  age: number;
-}
+export interface SocketData {}

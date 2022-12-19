@@ -1,20 +1,15 @@
 import { Server, ServerOptions } from "socket.io";
 import { Server as NodeServer } from "http";
 import {
-  ClientToServerEvents,
-  IntraServerEvents,
-  ServerToClientEvents,
+  ClientEvents,
+  ServerSideEvents,
+  ServerEvents,
   SocketData,
 } from "../../common/src/socketTypes";
 import { getRoom } from "./RoomManager";
 
 class State {
-  public io?: Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    IntraServerEvents,
-    SocketData
-  >;
+  public io?: Server<ClientEvents, ServerEvents, ServerSideEvents, SocketData>;
 
   public setUpSockets(server: NodeServer): void {
     const options: Partial<ServerOptions> = {

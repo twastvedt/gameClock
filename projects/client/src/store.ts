@@ -1,17 +1,17 @@
 import { defineStore } from "pinia";
 import { io, Socket } from "socket.io-client";
 import { Game } from "../../common/src/Game";
-import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from "../../common/src/socketTypes";
+import { ClientEvents, ServerEvents } from "../../common/src/socketTypes";
 
-let socketClient: Socket<ServerToClientEvents, ClientToServerEvents>;
+let socketClient: Socket<ServerEvents, ClientEvents>;
 
 export const useStore = defineStore("main", {
   state: () => {
     return {
-      game: undefined as Game | undefined,
+      game: Game.makeDefault(),
+      drawer: false,
+      editMode: false,
+      activeTime: 0,
     };
   },
   actions: {
@@ -30,10 +30,6 @@ export const useStore = defineStore("main", {
 
       socketClient.on("update", (changes) => {
         const game = this.game;
-
-        if (!game) {
-          throw new Error("No game!");
-        }
 
         Object.entries(changes).forEach(([key, value]) => {
           if (key in game) {
