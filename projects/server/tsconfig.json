@@ -4,13 +4,9 @@
     "outDir": "build",
     "rootDir": "src",
     "tsBuildInfoFile": "build/.tsbuildinfo",
-    "lib": [
-      "esnext",
-    ]
+    "lib": ["esnext"]
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts", "../common/src/Game.ts"],
   "references": [
     {
       "path": "../common"

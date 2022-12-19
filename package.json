@@ -3,11 +3,17 @@
   "version": "0.0.0",
   "scripts": {
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "clean": "rimraf projects/*/build && rimraf tsconfig.tsbuildinfo"
+    "clean": "rimraf projects/*/build && rimraf tsconfig.tsbuildinfo",
+    "build": "tsc -b",
+    "dev": "npm run build && concurrently \"npm -w projects/client run serve\" \"npm -w projects/server run serve\"",
+    "dev-client": "npm -w projects/client run serve",
+    "dev-server": "npm -w projects/server run serve",
+    "start": "npm -w projects/server start"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
     "@types/node": "^18.11.13",
+    "concurrently": "^7.6.0",
     "eslint": "^8.29.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.1",
