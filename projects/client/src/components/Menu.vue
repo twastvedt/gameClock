@@ -3,23 +3,21 @@ import { useStore } from "../store";
 
 const store = useStore();
 
-store.connect();
-
 function toggleEdit(): void {
   store.editMode = !store.editMode;
 
   if (store.editMode) {
-    store.game.paused = true;
+    store.game.pause();
   }
 }
 </script>
 
 <template>
-  <v-app-bar>
+  <v-app-bar app>
     <v-app-bar-nav-icon @click="store.drawer = !store.drawer" />
     <v-spacer />
     <v-btn
-      @click="store.game.pause"
+      @click="() => store.game.togglePause()"
       dark
       elevation="2"
       raised
@@ -40,17 +38,10 @@ function toggleEdit(): void {
     >
   </v-app-bar>
 
-  <v-navigation-drawer v-model="store.drawer" absolute temporary>
-    <v-list nav dense>
-      <v-list-item-group active-class="deep-purple--text text--accent-4">
-        <v-list-item>
-          <v-list-item-title>Home</v-list-item-title>
-        </v-list-item>
-
-        <v-list-item>
-          <v-list-item-title>Account</v-list-item-title>
-        </v-list-item>
-      </v-list-item-group>
+  <v-navigation-drawer v-model="store.drawer">
+    <v-list>
+      <v-list-item title="Home" />
+      <v-list-item title="Account" />
     </v-list>
   </v-navigation-drawer>
 </template>

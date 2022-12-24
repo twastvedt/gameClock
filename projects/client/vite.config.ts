@@ -9,7 +9,7 @@ import vuetify from "vite-plugin-vuetify";
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
-    outDir: "../server/clientBuild"
+    outDir: "../server/clientBuild",
   },
   plugins: [vue(), vuetify({ autoImport: true })],
   resolve: {

@@ -6,7 +6,8 @@ import {
   ServerEvents,
   SocketData,
 } from "../../common/src/socketTypes";
-import { getRoom } from "./RoomManager";
+import { getName, getRoom } from "./RoomManager";
+import { Game } from "../../common/src/Game";
 
 class State {
   public io?: Server<ClientEvents, ServerEvents, ServerSideEvents, SocketData>;
@@ -28,9 +29,31 @@ class State {
     this.io.on("connection", (socket) => {
       console.log("a user connected");
 
-      const room = getRoom();
+      let game: Game;
 
-      socket.emit("initialize", room);
+      socket.on("setRoom", (room, response) => {
+        for (const room of socket.rooms) {
+          socket.leave(room);
+        }
+
+        game = getRoom(room);
+
+        socket.join(game.name);
+
+        response(game);
+      });
+
+      socket.on("newRoom", (response) => {
+        const room = getName();
+
+        response(room);
+      });
+
+      socket.on("nextTurn", (time) => {
+        if (game) {
+          game.nextTurn();
+        }
+      });
     });
   }
 }

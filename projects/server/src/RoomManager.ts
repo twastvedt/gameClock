@@ -1,33 +1,44 @@
-import { Game } from "../../common/src/Game";
+import { Game, Local } from "../../common/src/Game";
 import { randomBytes } from "crypto";
 
 const maxRooms = parseInt(process.env.MAX_ROOMS ?? "100");
-const rooms: Map<string, Game> = new Map();
+const games: Map<string, Game> = new Map();
 
-function getName() {
+export function getName() {
   let name;
 
   do {
     name = randomBytes(6).toString("hex");
-  } while (rooms.has(name));
+  } while (games.has(name));
+
+  console.debug(`New room: ${name}. ${games.size} rooms total.`);
 
   return name;
+}
+
+export function validateName(name: string) {
+  return name?.length > 0 && name !== Local;
 }
 
 export function getRoom(name?: string) {
   name ??= getName();
 
-  let room = rooms.get(name);
+  let game = games.get(name);
 
-  if (!room) {
-    if (rooms.size < maxRooms) {
-      room = Game.makeDefault();
+  if (!game) {
+    if (games.size < maxRooms) {
+      if (!validateName(name)) {
+        throw new Error("Invalid name");
+      }
 
-      rooms.set(name, room);
+      game = Game.makeDefault();
+      game.name = name;
+
+      games.set(name, game);
     } else {
       throw new Error("Max rooms exceeded");
     }
   }
 
-  return room;
+  return game;
 }

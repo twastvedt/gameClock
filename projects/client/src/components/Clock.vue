@@ -5,6 +5,7 @@ const props = defineProps<{
   name: string;
   time: number;
   active: boolean;
+  editable: boolean;
 }>();
 
 const emit = defineEmits(["update:name"]);
@@ -45,19 +46,30 @@ function formatTime(time: number): string {
       <h1 class="title">
         {{ formatTime(time) }}
       </h1>
-      <v-text-field v-model="innerName" />
+      <v-text-field
+        solo
+        v-model.lazy="innerName"
+        :disabled="!editable"
+        class="textField"
+      />
     </v-card-text>
   </v-card>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .title {
   font-size: 90px;
   line-height: 120px;
 }
 
-.v-text-field :deep(input) {
-  font-size: 60px;
-  line-height: 80px;
+.textField {
+  :deep(input) {
+    font-size: 60px;
+    line-height: 80px;
+  }
+
+  :deep(*) {
+    opacity: 1;
+  }
 }
 </style>

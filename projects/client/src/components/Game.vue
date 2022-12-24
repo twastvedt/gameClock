@@ -1,12 +1,26 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import Clock from "./components/Clock.vue";
+import { computed, ref } from "vue";
+import Clock from "./Clock.vue";
 import draggable from "vuedraggable";
 import { useStore } from "../store";
+import { useRoute } from "vue-router";
+import { Player } from "../../../common/src/Player";
 
 const store = useStore();
 
-store.connect();
+const route = useRoute();
+
+if (route.meta.local) {
+  store.setLocal();
+} else {
+  const room = route.params.room;
+
+  if (typeof room === "string") {
+    store.setRoom(room);
+  } else {
+    store.setRoom();
+  }
+}
 
 let nextBeep = 10;
 
@@ -38,23 +52,25 @@ function clickMain(): void {
   }
 
   if (store.game.paused) {
-    store.game.nextTurn();
+    store.nextTurn();
   }
 
   store.game.pause();
 }
 
-function addPlayer(): void {
-  store.game.players.push({
-    name: "Player",
-    time: store.game.settings.addTime,
-  });
-}
+const players = computed({
+  get() {
+    return store.game.order.map((id) => store.game.players.get(id) as Player);
+  },
+  set(newValue) {
+    store.game.order = newValue.map((v) => v.id);
+  },
+});
 
 window.addEventListener("keyup", (event: KeyboardEvent) => {
   switch (event.code) {
     case "Escape":
-      store.game.pause();
+      store.game.togglePause();
       break;
 
     case "Space":
@@ -63,28 +79,31 @@ window.addEventListener("keyup", (event: KeyboardEvent) => {
   }
 });
 
+store.game.play();
+
 play();
 </script>
 
 <template>
   <audio hidden="true" ref="ding">
-    <source src="./assets/ding2.wav" type="audio/wav" />
+    <source src="../assets/ding2.wav" type="audio/wav" />
   </audio>
   <draggable
     @click="clickMain"
-    class="v-row fill-height main"
-    v-model="store.game.players"
+    class="v-row fill-height"
+    v-model="players"
     :disabled="!store.editMode"
-    item-key="name"
+    item-key="id"
   >
-    <template #item="{ element, index }">
+    <template #item="{ element }">
       <v-col cols="4">
         <Clock
           v-model:name="element.name"
           :time="
-            index === store.game.activeIndex ? store.activeTime : element.time
+            element.id === store.game.activeId ? store.activeTime : element.time
           "
-          :active="index === store.game.activeIndex"
+          :active="element.id === store.game.activeId"
+          :editable="store.editMode"
         />
       </v-col>
     </template>
@@ -93,7 +112,7 @@ play();
       <v-col cols="4" v-if="store.editMode">
         <v-card
           class="fill-height d-flex flex-column align-center justify-center elevation-0 newPlayerButton"
-          @click="addPlayer"
+          @click="store.game.addPlayer"
         >
           +
         </v-card>
@@ -111,9 +130,5 @@ play();
   font-size: 150px;
   background: transparent;
   border: 1px dashed black;
-}
-
-.main {
-  background-color: #cccccc;
 }
 </style>

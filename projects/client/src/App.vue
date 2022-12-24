@@ -1,8 +1,10 @@
-<script setup></script>
+<script setup>
+import Menu from "./components/Menu.vue";
+</script>
 
 <template>
   <v-app style="height: 100vh">
-    <v-app-bar app> CLOCK </v-app-bar>
+    <Menu />
     <v-main>
       <v-container class="fill-height" fluid>
         <router-view />
@@ -10,3 +12,8 @@
     </v-main>
   </v-app>
 </template>
+<style>
+.v-main {
+  background-color: #cccccc;
+}
+</style>
