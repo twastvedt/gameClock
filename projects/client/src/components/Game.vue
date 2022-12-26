@@ -60,7 +60,7 @@ function clickMain(): void {
 
 const players = computed({
   get() {
-    return store.game.order.map((id) => store.game.players.get(id) as Player);
+    return store.game.order.map((id) => store.game.players[id] as Player);
   },
   set(newValue) {
     store.game.order = newValue.map((v) => v.id);

@@ -49,10 +49,8 @@ class State {
         response(room);
       });
 
-      socket.on("nextTurn", (time) => {
-        if (game) {
-          game.nextTurn();
-        }
+      socket.on("update", (changes) => {
+        this.io?.to(game.name).except(socket.id).emit("update", changes);
       });
     });
   }

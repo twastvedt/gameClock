@@ -38,8 +38,14 @@ export const useStore = defineStore("main", {
         const game = this.game;
 
         Object.entries(changes).forEach(([key, value]) => {
-          if (key in game) {
-            (game as any)[key] = value;
+          switch (key) {
+            case "players":
+              game[key] = Object.assign(game[key], value);
+              break;
+
+            default:
+              (game as any)[key] = value;
+              break;
           }
         });
       });
@@ -73,13 +79,18 @@ export const useStore = defineStore("main", {
       }
     },
     nextTurn() {
-      if (!this.local && socketClient.connected) {
-        const nextPlayer = this.game.nextTurn();
+      const update = this.game.nextTurn();
 
-        socketClient.emit("update", {
-          activeId: nextPlayer,
-          turnStart: this.game.turnStart,
-        });
+      this.sendUpdate(update);
+    },
+    pause() {
+      const update = this.game.pause();
+
+      this.sendUpdate(update);
+    },
+    sendUpdate(changes: Partial<Game> | undefined) {
+      if (changes && !this.local && socketClient.connected) {
+        socketClient.emit("update", changes);
       }
     },
   },

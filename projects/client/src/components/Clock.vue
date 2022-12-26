@@ -47,7 +47,8 @@ function formatTime(time: number): string {
         {{ formatTime(time) }}
       </h1>
       <v-text-field
-        solo
+        variant="solo"
+        density="compact"
         v-model.lazy="innerName"
         :disabled="!editable"
         class="textField"
@@ -65,7 +66,6 @@ function formatTime(time: number): string {
 .textField {
   :deep(input) {
     font-size: 60px;
-    line-height: 80px;
   }
 
   :deep(*) {

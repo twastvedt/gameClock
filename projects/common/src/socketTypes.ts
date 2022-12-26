@@ -1,13 +1,12 @@
 import { Game } from "./Game";
 
 export interface ServerEvents {
-  update: (state: Partial<Game>) => void;
+  update: (changes: Partial<Game>) => void;
   initialize: () => void;
 }
 
 export interface ClientEvents {
-  update: (state: Partial<Game>) => void;
-  nextTurn: (time: number) => void;
+  update: (changes: Partial<Game>) => void;
   setRoom: (room: string, response: (game: Game) => void) => void;
   newRoom: (response: (room: string) => void) => void;
 }

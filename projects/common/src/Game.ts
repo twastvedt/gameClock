@@ -12,7 +12,7 @@ export class Game {
    */
   turnStart: number | undefined = undefined;
   paused = false;
-  players: Map<string, Player> = new Map();
+  players: Record<string, Player> = {};
   order: string[] = [];
   settings = new GameSettings();
 
@@ -29,7 +29,7 @@ export class Game {
       this.activeId = this.order[0];
     }
 
-    const player = this.players.get(this.activeId);
+    const player = this.players[this.activeId];
 
     if (!player) {
       throw new Error("Could not find player");
@@ -40,14 +40,16 @@ export class Game {
 
   /**
    * Move to next player.
-   * @returns Id of new player.
+   * @param time Time at which the turn changed.
+   * @returns Changes to game state.
    */
-  nextTurn(): string {
+  nextTurn(time?: number): Partial<Game> {
+    time ??= Date.now();
     const activePlayer = this.activePlayer();
 
     if (this.turnStart !== undefined) {
       activePlayer.time = Math.max(
-        activePlayer.time - (Date.now() - this.turnStart) / 1000,
+        activePlayer.time - (time - this.turnStart) / 1000,
         0
       );
     }
@@ -59,33 +61,53 @@ export class Game {
 
     const index = this.order.indexOf(activePlayer.id);
     this.activeId = this.order[(index + 1) % this.order.length];
-    this.turnStart = Date.now();
+    this.turnStart = time;
 
-    return this.activeId;
+    return {
+      players: { [activePlayer.id]: activePlayer },
+      activeId: this.activeId,
+      turnStart: time,
+    };
   }
 
-  togglePause(): void {
+  togglePause(time?: number): Partial<Game> | undefined {
     if (this.paused) {
-      this.play();
+      return this.play(time);
     } else {
-      this.pause();
+      return this.pause(time);
     }
   }
 
-  pause(): void {
+  pause(time?: number): Partial<Game> | undefined {
     if (!this.paused) {
       this.paused = true;
 
       if (this.activeId !== undefined && this.turnStart !== undefined) {
-        this.activePlayer().time -= (Date.now() - this.turnStart) / 1000;
+        const activePlayer = this.activePlayer();
+
+        activePlayer.time -= (time ?? Date.now() - this.turnStart) / 1000;
+        this.turnStart = undefined;
+
+        return {
+          players: { [activePlayer.id]: activePlayer },
+          turnStart: undefined,
+          paused: true,
+        };
       }
+
+      return { paused: true };
     }
   }
 
-  play(): void {
+  play(time?: number): Partial<Game> | undefined {
     if (this.paused || this.turnStart === undefined) {
       this.paused = false;
-      this.turnStart = Date.now();
+      this.turnStart = time ?? Date.now();
+
+      return {
+        paused: false,
+        turnStart: this.turnStart,
+      };
     }
   }
 
@@ -105,25 +127,35 @@ export class Game {
     return time;
   }
 
-  addPlayer(name?: string) {
+  addPlayer(name?: string): Partial<Game> {
     name ??= "Player";
     const id = Game.makeId();
-
-    this.players.set(id, {
+    const player = {
       id,
       name,
       time: this.settings.maxTime,
-    });
+    };
+
+    this.players[id] = player;
 
     this.order.push(id);
 
+    const changes: Partial<Game> = {
+      order: this.order,
+      players: { [id]: player },
+    };
+
     if (!this.activeId) {
       this.activeId = id;
+      changes.activeId = id;
     }
+
+    return changes;
   }
 
   removePlayer(id: string) {
-    if (this.players.delete(id)) {
+    if (this.players[id]) {
+      delete this.players[id];
       this.order.splice(this.order.indexOf(id), 1);
     } else {
       throw new Error("Could not find player to remove.");
