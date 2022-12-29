@@ -63,7 +63,7 @@ const players = computed({
     return store.game.order.map((id) => store.game.players[id] as Player);
   },
   set(newValue) {
-    store.game.order = newValue.map((v) => v.id);
+    store.changeOrder(newValue.map((v) => v.id));
   },
 });
 
@@ -74,8 +74,8 @@ window.addEventListener("keyup", (event: KeyboardEvent) => {
       break;
 
     case "Space":
+      event.preventDefault();
       store.nextTurn();
-      event.stopPropagation();
       break;
   }
 });
@@ -98,6 +98,7 @@ play();
       <v-col cols="4">
         <Clock
           v-model:name="element.name"
+          @update:name="store.updatePlayer(element)"
           :time="
             element.id === store.game.activeId ? store.activeTime : element.time
           "
@@ -111,7 +112,7 @@ play();
       <v-col cols="4" v-if="store.editMode">
         <v-card
           class="fill-height d-flex flex-column align-center justify-center elevation-0 newPlayerButton"
-          @click="store.addPlayer"
+          @click="store.addPlayer()"
         >
           +
         </v-card>

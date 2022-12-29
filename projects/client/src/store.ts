@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { io, Socket } from "socket.io-client";
 import { Game, Local } from "../../common/src/Game";
+import { Player } from "../../common/src/Player";
 import { ClientEvents, ServerEvents } from "../../common/src/socketTypes";
 
 let socketClient: Socket<ServerEvents, ClientEvents>;
@@ -90,6 +91,13 @@ export const useStore = defineStore("main", {
     },
     addPlayer(name?: string) {
       this.sendUpdate(this.game.addPlayer(name));
+    },
+    updatePlayer(player: Player) {
+      this.sendUpdate({ players: { [player.id]: player } });
+    },
+    changeOrder(newOrder: string[]) {
+      this.game.order = newOrder;
+      this.sendUpdate({ order: newOrder });
     },
     sendUpdate(changes: Partial<Game> | undefined) {
       if (changes && !this.local && socketClient.connected) {

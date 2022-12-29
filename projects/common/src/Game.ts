@@ -45,11 +45,10 @@ export class Game {
 
   /**
    * Move to next player.
-   * @param time Time at which the turn changed.
    * @returns Changes to game state.
    */
-  nextTurn(time?: number): Partial<Game> {
-    time ??= Date.now();
+  nextTurn(): Partial<Game> {
+    const time = Date.now();
     const activePlayer = this.activePlayer();
 
     if (this.turnStart !== undefined) {
@@ -75,33 +74,33 @@ export class Game {
     };
   }
 
-  togglePause(time?: number): Partial<Game> | undefined {
+  togglePause(): Partial<Game> | undefined {
     if (this.paused) {
-      return this.play(time);
+      return this.play();
     } else {
-      return this.pause(time);
+      return this.pause();
     }
   }
 
-  setPause(paused?: boolean, time?: number): Partial<Game> | undefined {
+  setPause(paused?: boolean): Partial<Game> | undefined {
     switch (paused) {
       case true:
-        return this.pause(time);
+        return this.pause();
       case false:
-        return this.play(time);
+        return this.play();
       case undefined:
-        return this.togglePause(time);
+        return this.togglePause();
     }
   }
 
-  pause(time?: number): Partial<Game> | undefined {
+  pause(): Partial<Game> | undefined {
     if (!this.paused) {
       this.paused = true;
 
       if (this.activeId !== undefined && this.turnStart !== undefined) {
         const activePlayer = this.activePlayer();
 
-        activePlayer.time -= (time ?? Date.now() - this.turnStart) / 1000;
+        activePlayer.time -= (Date.now() - this.turnStart) / 1000;
         this.turnStart = undefined;
 
         return {
@@ -115,10 +114,10 @@ export class Game {
     }
   }
 
-  play(time?: number): Partial<Game> | undefined {
+  play(): Partial<Game> | undefined {
     if (this.paused || this.turnStart === undefined) {
       this.paused = false;
-      this.turnStart = time ?? Date.now();
+      this.turnStart = Date.now();
 
       return {
         paused: false,
