@@ -149,7 +149,7 @@ export class Game {
     const player = {
       id,
       name,
-      time: this.settings.maxTime,
+      time: this.settings.startTime,
     };
 
     this.players[id] = player;
