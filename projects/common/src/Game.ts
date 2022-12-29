@@ -4,24 +4,29 @@ import { GameSettings } from "./GameSettings";
 export const Local = "local";
 
 export class Game {
-  name = Local;
   activeId?: string;
 
   /**
    * Timestamp of beginning of current turn.
    */
   turnStart: number | undefined = undefined;
-  paused = false;
+  paused = true;
   players: Record<string, Player> = {};
   order: string[] = [];
   settings = new GameSettings();
 
-  static makeDefault() {
-    const game = new Game();
+  constructor(public name = Local) {}
+
+  static makeDefault(name?: string) {
+    const game = new Game(name);
 
     [...Array(5).keys()].forEach((i) => game.addPlayer(`Player ${i}`));
 
     return game;
+  }
+
+  static clone(game: Game) {
+    return Object.assign(new Game(game.name), game);
   }
 
   activePlayer() {
@@ -78,6 +83,17 @@ export class Game {
     }
   }
 
+  setPause(paused?: boolean, time?: number): Partial<Game> | undefined {
+    switch (paused) {
+      case true:
+        return this.pause(time);
+      case false:
+        return this.play(time);
+      case undefined:
+        return this.togglePause(time);
+    }
+  }
+
   pause(time?: number): Partial<Game> | undefined {
     if (!this.paused) {
       this.paused = true;
@@ -113,7 +129,7 @@ export class Game {
 
   update(): number | undefined {
     if (this.paused || this.turnStart === undefined) {
-      return undefined;
+      return this.activePlayer().time;
     }
 
     const time =

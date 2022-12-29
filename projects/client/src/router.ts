@@ -4,7 +4,7 @@ import Game from "./components/Game.vue";
 const routes = [
   {
     path: "/local",
-    name: "Local Game",
+    name: "local",
     component: Game,
     meta: {
       local: true,
@@ -15,8 +15,8 @@ const routes = [
     redirect: "/local",
   },
   {
-    path: "/room/:room",
-    name: "Game Room",
+    path: "/room/:room?",
+    name: "room",
     component: Game,
   },
 ];

@@ -1,10 +1,7 @@
 import { defineStore } from "pinia";
 import { io, Socket } from "socket.io-client";
-import { useRouter } from "vue-router";
 import { Game, Local } from "../../common/src/Game";
 import { ClientEvents, ServerEvents } from "../../common/src/socketTypes";
-
-const router = useRouter();
 
 let socketClient: Socket<ServerEvents, ClientEvents>;
 
@@ -24,8 +21,15 @@ export const useStore = defineStore("main", {
         return socketClient;
       }
 
-      if (typeof import.meta.env.VITE_SV_ADDRESS === "string") {
-        socketClient = io(import.meta.env.VITE_SV_ADDRESS);
+      if (
+        typeof import.meta.env.VITE_SERVER_URL === "string" &&
+        typeof import.meta.env.VITE_SERVER_PORT === "string"
+      ) {
+        socketClient = io(
+          `${import.meta.env.VITE_SERVER_URL}:${
+            import.meta.env.VITE_SERVER_PORT
+          }`
+        );
       } else {
         socketClient = io();
       }
@@ -70,23 +74,22 @@ export const useStore = defineStore("main", {
 
       if (room) {
         client.emit("setRoom", room, (game) => {
-          this.game = game;
+          this.game = Game.clone(game);
         });
       } else {
         client.emit("newRoom", (name) => {
-          router.push(`/room/${name}`);
+          this.$router.push({ name: "room", params: { room: name } });
         });
       }
     },
     nextTurn() {
-      const update = this.game.nextTurn();
-
-      this.sendUpdate(update);
+      this.sendUpdate(this.game.nextTurn());
     },
-    pause() {
-      const update = this.game.pause();
-
-      this.sendUpdate(update);
+    setPause(paused?: boolean) {
+      this.sendUpdate(this.game.setPause(paused));
+    },
+    addPlayer(name?: string) {
+      this.sendUpdate(this.game.addPlayer(name));
     },
     sendUpdate(changes: Partial<Game> | undefined) {
       if (changes && !this.local && socketClient.connected) {

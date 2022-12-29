@@ -7,7 +7,7 @@ function toggleEdit(): void {
   store.editMode = !store.editMode;
 
   if (store.editMode) {
-    store.game.pause();
+    store.setPause(true);
   }
 }
 </script>
@@ -17,7 +17,7 @@ function toggleEdit(): void {
     <v-app-bar-nav-icon @click="store.drawer = !store.drawer" />
     <v-spacer />
     <v-btn
-      @click="() => store.game.togglePause()"
+      @click="() => store.setPause()"
       dark
       elevation="2"
       raised
@@ -26,7 +26,7 @@ function toggleEdit(): void {
       {{ store.game.paused ? "un" : "" }}pause
     </v-btn>
     <v-spacer />
-    <v-btn @click="store.game.nextTurn" title="Next turn"
+    <v-btn @click="store.nextTurn" title="Next turn"
       ><v-icon>mdi-arrow-right</v-icon></v-btn
     >
     <v-btn

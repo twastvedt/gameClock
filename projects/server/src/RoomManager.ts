@@ -11,6 +11,8 @@ export function getName() {
     name = randomBytes(6).toString("hex");
   } while (games.has(name));
 
+  games.set(name, Game.makeDefault(name));
+
   console.debug(`New room: ${name}. ${games.size} rooms total.`);
 
   return name;
@@ -31,8 +33,7 @@ export function getRoom(name?: string) {
         throw new Error("Invalid name");
       }
 
-      game = Game.makeDefault();
-      game.name = name;
+      game = Game.makeDefault(name);
 
       games.set(name, game);
     } else {

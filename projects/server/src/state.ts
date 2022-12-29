@@ -17,9 +17,9 @@ class State {
       serveClient: false,
     };
 
-    if (process.env.VITE_SV_ADDRESS) {
+    if (process.env.VITE_SERVER_URL && process.env.BROWSER_PORT) {
       options.cors = {
-        origin: process.env.VITE_SV_ADDRESS,
+        origin: `${process.env.VITE_SERVER_URL}:${process.env.BROWSER_PORT}`,
         methods: ["GET", "POST"],
       };
     }
@@ -33,7 +33,9 @@ class State {
 
       socket.on("setRoom", (room, response) => {
         for (const room of socket.rooms) {
-          socket.leave(room);
+          if (room !== socket.id) {
+            socket.leave(room);
+          }
         }
 
         game = getRoom(room);
@@ -50,7 +52,7 @@ class State {
       });
 
       socket.on("update", (changes) => {
-        this.io?.to(game.name).except(socket.id).emit("update", changes);
+        socket.broadcast.to(game?.name).emit("update", changes);
       });
     });
   }

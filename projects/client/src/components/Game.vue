@@ -55,7 +55,7 @@ function clickMain(): void {
     store.nextTurn();
   }
 
-  store.game.pause();
+  store.setPause(true);
 }
 
 const players = computed({
@@ -70,16 +70,15 @@ const players = computed({
 window.addEventListener("keyup", (event: KeyboardEvent) => {
   switch (event.code) {
     case "Escape":
-      store.game.togglePause();
+      store.setPause();
       break;
 
     case "Space":
-      store.game.nextTurn();
+      store.nextTurn();
+      event.stopPropagation();
       break;
   }
 });
-
-store.game.play();
 
 play();
 </script>
@@ -112,7 +111,7 @@ play();
       <v-col cols="4" v-if="store.editMode">
         <v-card
           class="fill-height d-flex flex-column align-center justify-center elevation-0 newPlayerButton"
-          @click="store.game.addPlayer"
+          @click="store.addPlayer"
         >
           +
         </v-card>
