@@ -6,7 +6,7 @@
     "clean": "rimraf projects/*/build && rimraf tsconfig.tsbuildinfo",
     "build": "tsc -b",
     "watch": "tsc -b --watch",
-    "dev": "npm run build && concurrently \"npm -w projects/client run serve\" \"npm -w projects/server run serve\"",
+    "dev": "concurrently \"npm run watch\" \"npm -w projects/client run dev\" \"npm -w projects/server run serve\"",
     "dev-client": "npm -w projects/client run dev",
     "dev-server": "npm -w projects/server run serve",
     "start": "npm -w projects/server start"

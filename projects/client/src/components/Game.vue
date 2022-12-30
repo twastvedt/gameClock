@@ -51,11 +51,7 @@ function clickMain(): void {
     return;
   }
 
-  if (store.game.paused) {
-    store.nextTurn();
-  }
-
-  store.setPause(true);
+  store.setPause();
 }
 
 const players = computed({

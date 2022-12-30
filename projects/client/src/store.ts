@@ -40,19 +40,7 @@ export const useStore = defineStore("main", {
       });
 
       socketClient.on("update", (changes) => {
-        const game = this.game;
-
-        Object.entries(changes).forEach(([key, value]) => {
-          switch (key) {
-            case "players":
-              game[key] = Object.assign(game[key], value);
-              break;
-
-            default:
-              (game as any)[key] = value;
-              break;
-          }
-        });
+        this.game.applyChanges(changes);
       });
 
       return socketClient;
@@ -78,8 +66,8 @@ export const useStore = defineStore("main", {
           this.game = Game.clone(game);
         });
       } else {
-        client.emit("newRoom", (name) => {
-          this.$router.push({ name: "room", params: { room: name } });
+        client.emit("newRoom", (game) => {
+          this.$router.push({ name: "room", params: { room: game.name } });
         });
       }
     },
@@ -87,7 +75,13 @@ export const useStore = defineStore("main", {
       this.sendUpdate(this.game.nextTurn());
     },
     setPause(paused?: boolean) {
-      this.sendUpdate(this.game.setPause(paused));
+      const changes = this.game.setPause(paused);
+
+      if (changes?.paused === false) {
+        this.editMode = false;
+      }
+
+      this.sendUpdate(changes);
     },
     addPlayer(name?: string) {
       this.sendUpdate(this.game.addPlayer(name));

@@ -6,7 +6,7 @@ import {
   ServerEvents,
   SocketData,
 } from "../../common/src/socketTypes";
-import { getName, getRoom } from "./RoomManager";
+import { getGame } from "./RoomManager";
 import { Game } from "../../common/src/Game";
 
 class State {
@@ -27,32 +27,41 @@ class State {
     this.io = new Server(server, options);
 
     this.io.on("connection", (socket) => {
-      console.log("a user connected");
+      console.debug(`${socket.id}: connected`);
 
       let game: Game;
 
       socket.on("setRoom", (room, response) => {
-        for (const room of socket.rooms) {
-          if (room !== socket.id) {
-            socket.leave(room);
-          }
+        const oldName = game?.name;
+
+        if (oldName) {
+          socket.leave(oldName);
         }
 
-        game = getRoom(room);
+        game = getGame(room);
 
         socket.join(game.name);
+
+        console.debug(
+          `${socket.id}: ${oldName ? `left ${oldName}, ` : ""}joined ${
+            game.name
+          }`
+        );
 
         response(game);
       });
 
       socket.on("newRoom", (response) => {
-        const room = getName();
+        const game = getGame();
 
-        response(room);
+        response(game);
       });
 
       socket.on("update", (changes) => {
-        socket.broadcast.to(game?.name).emit("update", changes);
+        if (game) {
+          game.applyChanges(changes);
+          socket.broadcast.to(game.name).emit("update", changes);
+        }
       });
     });
   }

@@ -126,6 +126,20 @@ export class Game {
     }
   }
 
+  applyChanges(changes: Partial<Game>) {
+    Object.entries(changes).forEach(([key, value]) => {
+      switch (key) {
+        case "players":
+          this[key] = Object.assign(this[key], value);
+          break;
+
+        default:
+          (this as any)[key] = value;
+          break;
+      }
+    });
+  }
+
   update(): number | undefined {
     if (this.paused || this.turnStart === undefined) {
       return this.activePlayer().time;

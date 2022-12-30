@@ -4,42 +4,32 @@ import { randomBytes } from "crypto";
 const maxRooms = parseInt(process.env.MAX_ROOMS ?? "100");
 const games: Map<string, Game> = new Map();
 
-export function getName() {
-  let name;
-
-  do {
-    name = randomBytes(6).toString("hex");
-  } while (games.has(name));
-
-  games.set(name, Game.makeDefault(name));
-
-  console.debug(`New room: ${name}. ${games.size} rooms total.`);
-
-  return name;
-}
-
 export function validateName(name: string) {
   return name?.length > 0 && name !== Local;
 }
 
-export function getRoom(name?: string) {
-  name ??= getName();
-
-  let game = games.get(name);
-
-  if (!game) {
-    if (games.size < maxRooms) {
+export function getGame(name?: string) {
+  if (games.size < maxRooms) {
+    if (name) {
       if (!validateName(name)) {
         throw new Error("Invalid name");
       }
-
-      game = Game.makeDefault(name);
-
-      games.set(name, game);
     } else {
-      throw new Error("Max rooms exceeded");
+      do {
+        name = randomBytes(2).toString("hex");
+      } while (games.has(name));
     }
-  }
 
-  return game;
+    let game = games.get(name);
+
+    if (!game) {
+      game = Game.makeDefault(name);
+      games.set(name, game);
+      console.debug(`New room: ${name}. ${games.size} rooms total.`);
+    }
+
+    return game;
+  } else {
+    throw new Error("Max rooms exceeded");
+  }
 }

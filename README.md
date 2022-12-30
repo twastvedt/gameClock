@@ -1,6 +1,46 @@
 # game-clock
 
-This template should help get you started developing with Vue 3 in Vite.
+## TODO:
+
+- Room lifecycle: remove empty and old rooms
+- Player mode: big tile for one player.
+- Flexible player tile layout (see `projects/client/src/Grid.ts`).
+- Settings config
+- Menu, new game form at `/`.
+
+## Project Setup
+
+1. Install dependencies
+
+```sh
+npm install
+```
+
+2. Copy `template.env` to `.env` in the same directory, and modify if necessary (likely no changes needed for a local dev setup).
+
+### Compile and Hot-Reload for Development
+
+```sh
+npm run dev
+```
+
+Or separately:
+
+- Build and watch TypeScript: `npm run watch`.
+- Start front-end Vue development server (Vite): `npm run dev-client`.
+- Start Express development server: `npm run dev-server`.
+
+### Type-Check, Compile and Minify for Production
+
+```sh
+npm run build
+```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+npm run lint
+```
 
 ## Recommended IDE Setup
 
@@ -20,27 +60,3 @@ If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has a
 ## Customize configuration
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
