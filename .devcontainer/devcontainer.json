@@ -1,0 +1,22 @@
+// How to get remote container development working with VSCode:
+// 1. Install "Remote Development" extension pack (ms-vscode-remote.vscode-remote-extensionpack)
+// 2. Select "Remote Containers - Reopen in container"
+
+{
+  "name": "game-clock",
+  "dockerComposeFile": ["./docker-compose.yml"],
+  "forwardPorts": [3000],
+  "service": "app",
+  "workspaceFolder": "/mendel",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "Vue.volar",
+    "Vue.vscode-typescript-vue-plugin",
+    "esbenp.prettier-vscode",
+    "EditorConfig.editorconfig",
+    "ms-azuretools.vscode-docker"
+  ],
+  "postCreateCommand": ["npm", "install"]
+}
