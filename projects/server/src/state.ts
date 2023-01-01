@@ -52,7 +52,7 @@ class State {
       });
 
       socket.on("newRoom", (response) => {
-        const game = getGame();
+        game = getGame();
 
         response(game);
       });
