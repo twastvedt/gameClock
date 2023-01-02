@@ -1,8 +1,15 @@
+# Template compose file for production use.
+
 version: "3"
 services:
   app:
-    build:
-      context: ../
-      dockerfile: docker/Dockerfile
-    ports:
-      - "80:3000"
+    container_name: gameclock
+    image: ghcr.io/twastvedt/gameclock:main
+    restart: always
+    expose:
+      - 80
+    environment:
+      # Server url (without port).
+      VITE_SERVER_URL: https://site-url.com
+      # Server port from the perspective of Express.
+      VITE_SERVER_PORT: 80

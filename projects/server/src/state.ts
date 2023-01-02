@@ -6,7 +6,7 @@ import {
   ServerEvents,
   SocketData,
 } from "../../common/src/socketTypes";
-import { getGame } from "./RoomManager";
+import { getGame, removeGame } from "./RoomManager";
 import { Game } from "../../common/src/Game";
 
 class State {
@@ -61,6 +61,16 @@ class State {
         if (game) {
           game.applyChanges(changes);
           socket.broadcast.to(game.name).emit("update", changes);
+        }
+      });
+
+      socket.on("disconnect", (reason) => {
+        console.debug(`${socket.id}: disconnected (${reason})`);
+
+        const room = this.io?.sockets.adapter.rooms.get(game.name);
+
+        if (room && room.size === 0) {
+          removeGame(game.name);
         }
       });
     });

@@ -33,3 +33,13 @@ export function getGame(name?: string) {
     throw new Error("Max rooms exceeded");
   }
 }
+
+export function removeGame(name: string) {
+  const result = games.delete(name);
+
+  if (result) {
+    console.debug(`Removing room: ${name}. ${games.size} rooms remain.`);
+  }
+
+  return result;
+}
