@@ -52,10 +52,17 @@ export class Game {
     const activePlayer = this.activePlayer();
 
     if (this.turnStart !== undefined) {
-      activePlayer.time = Math.max(
-        activePlayer.time - (time - this.turnStart) / 1000,
-        0
-      );
+      const timeRemaining = activePlayer.time - (time - this.turnStart) / 1000;
+
+      activePlayer.time = Math.max(timeRemaining, 0);
+
+      if (timeRemaining < 0) {
+        this.turnStart += activePlayer.time * 1000;
+      } else {
+        this.turnStart = time;
+      }
+    } else {
+      this.turnStart = time;
     }
 
     activePlayer.time = Math.min(
@@ -65,12 +72,11 @@ export class Game {
 
     const index = this.order.indexOf(activePlayer.id);
     this.activeId = this.order[(index + 1) % this.order.length];
-    this.turnStart = time;
 
     return {
       players: { [activePlayer.id]: activePlayer },
       activeId: this.activeId,
-      turnStart: time,
+      turnStart: this.turnStart,
     };
   }
 

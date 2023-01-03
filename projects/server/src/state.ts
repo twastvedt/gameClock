@@ -17,9 +17,15 @@ class State {
       serveClient: false,
     };
 
-    if (process.env.VITE_SERVER_URL && process.env.BROWSER_PORT) {
+    if (process.env.VITE_SERVER_URL) {
+      let origin = process.env.VITE_SERVER_URL;
+
+      if (process.env.BROWSER_PORT) {
+        origin += `:${process.env.BROWSER_PORT}`;
+      }
+
       options.cors = {
-        origin: `${process.env.VITE_SERVER_URL}:${process.env.BROWSER_PORT}`,
+        origin,
         methods: ["GET", "POST"],
       };
     }
@@ -67,10 +73,12 @@ class State {
       socket.on("disconnect", (reason) => {
         console.debug(`${socket.id}: disconnected (${reason})`);
 
-        const room = this.io?.sockets.adapter.rooms.get(game.name);
+        if (game) {
+          const room = this.io?.sockets.adapter.rooms.get(game.name);
 
-        if (room && room.size === 0) {
-          removeGame(game.name);
+          if (!room) {
+            removeGame(game.name);
+          }
         }
       });
     });

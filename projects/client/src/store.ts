@@ -22,15 +22,14 @@ export const useStore = defineStore("main", {
         return socketClient;
       }
 
-      if (
-        typeof import.meta.env.VITE_SERVER_URL === "string" &&
-        typeof import.meta.env.VITE_SERVER_PORT === "string"
-      ) {
-        socketClient = io(
-          `${import.meta.env.VITE_SERVER_URL}:${
-            import.meta.env.VITE_SERVER_PORT
-          }`
-        );
+      if (typeof import.meta.env.VITE_SERVER_URL === "string") {
+        let uri = import.meta.env.VITE_SERVER_URL;
+
+        if (typeof import.meta.env.VITE_SERVER_PORT === "string") {
+          uri += `:${import.meta.env.VITE_SERVER_PORT}`;
+        }
+
+        socketClient = io(uri);
       } else {
         socketClient = io();
       }

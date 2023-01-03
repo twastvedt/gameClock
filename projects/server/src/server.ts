@@ -10,7 +10,7 @@ dotenv.config({ path: join(__dirname, "../../../.env") });
 const production = process.env.NODE_ENV === "production";
 
 const app = express()
-  .set("port", process.env.VITE_SERVER_PORT || 3000)
+  .set("port", process.env.EXPRESS_PORT || process.env.VITE_SERVER_PORT || 80)
   .use(json(), cors(), history());
 
 if (production) {

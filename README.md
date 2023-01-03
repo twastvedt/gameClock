@@ -2,7 +2,7 @@
 
 ## TODO:
 
-- Room lifecycle: remove empty and old rooms
+- Room lifecycle: remove old rooms
 - Player mode: big tile for one player.
 - Flexible player tile layout (see `projects/client/src/Grid.ts`).
 - Settings config

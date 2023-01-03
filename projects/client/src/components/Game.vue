@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import Clock from "./Clock.vue";
 import draggable from "vuedraggable";
 import { useStore } from "../store";
@@ -10,17 +10,25 @@ const store = useStore();
 
 const route = useRoute();
 
-if (route.meta.local) {
-  store.setLocal();
-} else {
-  const room = route.params.room;
-
-  if (typeof room === "string") {
-    store.setRoom(room);
+function initializeRoom() {
+  if (route.meta.local) {
+    store.setLocal();
   } else {
-    store.setRoom();
+    const room = route.params.room;
+
+    if (typeof room === "string") {
+      store.setRoom(room);
+    } else {
+      store.setRoom();
+    }
   }
 }
+
+watch([() => route.meta.local, () => route.params.room], (newRoute) => {
+  initializeRoom();
+});
+
+initializeRoom();
 
 let nextBeep = 10;
 
