@@ -21,4 +21,8 @@ export default defineConfig({
     port: 8080,
   },
   envDir: "../../",
+  define: {
+    BUILD_DATE: Date.now(),
+    GIT_SHA: process.env.GIT_SHA,
+  },
 });

@@ -1,19 +1,22 @@
 <script setup>
 import Menu from "./components/Menu.vue";
+
+const footer = `${new Date(BUILD_DATE)} | ${GIT_SHA}`;
 </script>
 
 <template>
-  <v-app style="height: 100vh">
+  <v-app class="app">
     <Menu />
-    <v-main>
+    <v-main class="bg-grey-lighten-3">
       <v-container class="fill-height" fluid>
         <router-view />
       </v-container>
     </v-main>
+    <v-footer class="bg-grey-lighten-3">{{ footer }}</v-footer>
   </v-app>
 </template>
 <style>
-.v-main {
-  background-color: #cccccc;
+.app {
+  height: 100vh;
 }
 </style>

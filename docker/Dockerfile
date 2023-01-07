@@ -36,6 +36,9 @@ RUN rm -rf projects/client && npx -w projects/common tsc -b
 
 COPY --from=vue /app/projects/server/clientBuild projects/server/clientBuild
 
+ARG GIT_SHA
+ENV GIT_SHA=${GIT_SHA}
+
 EXPOSE 8080
 
 CMD ["npm", "start"]
