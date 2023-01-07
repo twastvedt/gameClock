@@ -7,13 +7,21 @@ export class GameManager {
 
   startUpdates(interval = 1000) {
     this.updateTimer = setInterval(() => {
-      this.game.update();
+      try {
+        this.game.update();
+      } catch (error) {
+        console.error(
+          `Stopping scheduled updates of ${this.game.name}: \n${error}`
+        );
+        this.stopUpdates();
+      }
     }, interval);
   }
 
   stopUpdates() {
     if (this.updateTimer) {
       clearInterval(this.updateTimer);
+      delete this.updateTimer;
     }
   }
 }
