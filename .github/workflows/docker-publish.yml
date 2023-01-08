@@ -63,6 +63,10 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - name: Get Hash
+        id: hash
+        run: echo "git_hash=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
@@ -76,7 +80,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: GIT_SHA=${{ git rev-parse --short "$GITHUB_SHA" }}
+          build-args: GIT_SHA=${{ env.git_hash }}
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
