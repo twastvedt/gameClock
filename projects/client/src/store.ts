@@ -58,11 +58,11 @@ export const useStore = defineStore("main", {
     },
     setRoom(room?: string) {
       const client = this.connect();
-      this.local = false;
 
       if (room) {
         client.emit("setRoom", room, (game) => {
           this.game = Game.clone(game);
+          this.local = false;
         });
       } else {
         client.emit("newRoom", (game) => {
