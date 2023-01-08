@@ -14,6 +14,9 @@ COPY projects/client projects/client/
 
 ENV NODE_ENV=production
 
+ARG GIT_SHA
+ENV GIT_SHA=${GIT_SHA}
+
 RUN npx -w projects/common tsc -b && npm run -w projects/client build
 
 
@@ -35,9 +38,6 @@ COPY . .
 RUN rm -rf projects/client && npx -w projects/common tsc -b
 
 COPY --from=vue /app/projects/server/clientBuild projects/server/clientBuild
-
-ARG GIT_SHA
-ENV GIT_SHA=${GIT_SHA}
 
 EXPOSE 8080
 
