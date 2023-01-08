@@ -1,7 +1,7 @@
 <script setup>
 import Menu from "./components/Menu.vue";
 
-const footer = `${new Date(BUILD_DATE)} | ${GIT_SHA}`;
+const footer = `${new Date(BUILD_DATE).toLocaleString()} | GIT_SHA`;
 </script>
 
 <template>
