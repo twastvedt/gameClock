@@ -12,7 +12,10 @@ const footer = `${new Date(BUILD_DATE)} | ${GIT_SHA}`;
         <router-view />
       </v-container>
     </v-main>
-    <v-footer class="bg-grey-lighten-3">{{ footer }}</v-footer>
+    <v-footer
+      class="flex-grow-0 bg-grey-lighten-3 text-caption text-grey-darken-1"
+      >{{ footer }}</v-footer
+    >
   </v-app>
 </template>
 <style>
